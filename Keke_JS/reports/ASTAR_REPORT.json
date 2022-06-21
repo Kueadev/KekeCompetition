@@ -1,0 +1,28 @@
+[
+  {
+    "levelSet": "test_LEVELS",
+    "levels": [
+      {
+        "id": 0,
+        "iterations": 10000,
+        "time": 0.003,
+        "solution": "",
+        "won_level": false
+      },
+      {
+        "id": 1,
+        "iterations": 10000,
+        "time": 0.002,
+        "solution": "",
+        "won_level": false
+      },
+      {
+        "id": 2,
+        "iterations": 10000,
+        "time": 0.001,
+        "solution": "",
+        "won_level": false
+      }
+    ]
+  }
+]
