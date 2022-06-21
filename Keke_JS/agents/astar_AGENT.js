@@ -123,7 +123,7 @@ function convertResultToActions(astarResult) {
 }
 
 
-function initAstar(state){
+function startAstar(state){
 	const searchGrid = initsearchGrid(state)
 
 	const graph = new astar.Graph(searchGrid)
@@ -183,6 +183,6 @@ function initAstar(state){
 // VISIBLE FUNCTION FOR OTHER JS FILES (NODEJS)
 module.exports = {
 	step : function(init_state){return iterSolve(init_state)},		// iterative step function (returns solution as list of steps from poss_actions or empty list)
-	init : function(init_state){initAstar(init_state)},				// initializing function here
+	init : function(init_state){startAstar(init_state)},			// initializing function here
 	best_sol : function(){return [];}								//returns closest solution in case of timeout
 }
