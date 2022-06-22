@@ -1,26 +1,18 @@
-// BABA IS Y'ALL SOLVER - BLANK TEMPLATE
+// BABA IS Y'ALL SOLVER - RANDOM AGENT TEMPLATE
 // Version 1.0
 // Code by Milk 
 
-"use strict";
 
 //get imports (NODEJS)
 var simjs = require('../js/simulation')					//access the game states and simulation
-var astar = require('../js/astar')
+var astar = require('../js/astar');
 
 let possActions = ["space", "right", "up", "left", "down"];
 
+var MAX_SEQ = 50;
+var RAN_SEQ = 5
 
-
-// NEXT ITERATION STEP FOR SOLVING
-function iterSolve(init_state) {
-  // PERFORM ITERATIVE CALCULATIONS HERE //
-
-	
-	// return a sequence of actions or empty list
-	return [];
-}
-
+let result = []    //"best" solution
 
 
 function initSearchGrid(state){
@@ -57,9 +49,11 @@ function initSearchGrid(state){
 	const hasMeltRule = checkRuleExists('melt', parseRules(state.rules))
 	if (hasMeltRule) {
 		// state.featured: all objects that are either melt or hot
-		for (let object of state.featured) {
-			if (object.feature === 'hot') {
-				grid[object.y][object.x] = 0
+		if (state.featured.length > 0) {
+			for (let object of state.featured) {
+				if (object.feature === 'hot') {
+					grid[object.y][object.x] = 0
+				}
 			}
 		}
 	}
@@ -151,38 +145,68 @@ function startAstar(state){
 		}
 	}
 
-	
-	
-
 	// debug prints
-	console.log("\n### MAP ####")
-	for (let row of state.orig_map) {
-		console.log(row + " ")
-	}
-	console.log("\n### SEARCH GRID ###")
-	for (let row of searchGrid) {
-		console.log(row + " ")
-	}
-	console.log("\n### PLAYERS ###")
-	for (let player of players) {
-		console.log("(" + player.x  + "," + player.y + ")")
-	}
-	console.log("\n### GOALS ###")
-	for (let goal of goals) {
-		console.log("(" + goal.x  + "," + goal.y + ")")
-	}
-	console.log("\n### ASTAR RESULT ###")
-	console.log(astarResult)
+	// console.log("\n### ASTAR ACTIONS ###")
+	// console.log(actions)
 
-	console.log("\n### ACTIONS ###")
-	console.log(actions)
+	return actions
 }
+
+
+// returns a random sequence of directions
+// current length: 10
+function makeRandomSeq(){
+	const seq = []
+	for (let i = 0; i < RAN_SEQ; i++) {
+		let action = possActions[Math.floor(Math.random() * possActions.length)];
+		seq.push(action);
+	}
+	return seq;
+}
+
+
+// NEXT ITERATION STEP FOR SOLVING
+function iterSolve(state){
+	let currState = state
+	result = []
+
+	for (let i = 0; i < MAX_SEQ/RAN_SEQ; i++) {
+		// search direct path from start to goal
+		let astarPath = startAstar(currState)
+
+		// if astar found path: add steps to result and return
+		if (astarPath.length > 0) {
+			for (let step of astarPath) {
+				result.push(step)
+				if (result.length == MAX_SEQ) {
+					break
+				}
+			}
+			break
+		} else {
+			// try random steps
+			let randomSteps = makeRandomSeq()
+			// add steps & update state
+			for (let step of randomSteps) {
+				result.push(step)
+				if (result.length == MAX_SEQ) {
+					break
+				}
+				currState = simjs.nextMove(step, currState).next_state
+			}
+		}
+	}
+
+	return result;
+}
+
 
 
 
 // VISIBLE FUNCTION FOR OTHER JS FILES (NODEJS)
 module.exports = {
 	step : function(init_state){return iterSolve(init_state)},		// iterative step function (returns solution as list of steps from poss_actions or empty list)
-	init : function(init_state){startAstar(init_state)},			// initializing function here
-	best_sol : function(){return [];}								// returns closest solution in case of timeout
+	init : function(init_state){},									// initializing function here
+	best_sol : function(){return result;}
 }
+
