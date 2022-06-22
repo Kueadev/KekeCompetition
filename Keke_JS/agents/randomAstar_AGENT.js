@@ -10,9 +10,10 @@ var astar = require('../js/astar');
 let possActions = ["space", "right", "up", "left", "down"];
 
 var MAX_SEQ = 50;
-var RAN_SEQ = 5
+var RAN_SEQ = 2
 
-let result = []    //"best" solution
+let result = []    // "best" solution
+
 
 
 function initSearchGrid(state){
@@ -95,6 +96,7 @@ function checkRuleExists(checkRule, rules) {
 function convertResultToActions(astarResult) {
 	const actions = []
 
+	// the x and y coordinates are reversed in the Grid datastructure
 	for (let node of astarResult) {
 		// horizontal move
 		if (node.x === node.parent.x) {
@@ -118,6 +120,13 @@ function convertResultToActions(astarResult) {
 
 
 function startAstar(state){
+	// debug
+	for (const row of state.orig_map) {
+		console.log(row + " ")
+	}
+	console.log("Astar started.")
+
+
 	const searchGrid = initSearchGrid(state)
 
 	const graph = new astar.Graph(searchGrid)
@@ -144,17 +153,12 @@ function startAstar(state){
 			}
 		}
 	}
-
-	// debug prints
-	// console.log("\n### ASTAR ACTIONS ###")
-	// console.log(actions)
-
+	console.log("Astar Result:\n" + actions)
 	return actions
 }
 
 
-// returns a random sequence of directions
-// current length: 10
+// returns a random sequence of directions of length RAN_SEQ
 function makeRandomSeq(){
 	const seq = []
 	for (let i = 0; i < RAN_SEQ; i++) {
