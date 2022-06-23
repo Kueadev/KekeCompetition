@@ -1,7 +1,3 @@
-// BABA IS Y'ALL SOLVER - DFS TEMPLATE
-// Version 1.0
-// Code by Sarah
-
 "use strict";
 
 // deep copies objects
@@ -243,9 +239,8 @@ class Generation {
   } 
 
   createSelectionPool() {
-    
     this.creatures.forEach((creature) => {
-      // Add creature n times to mating pool, where n is the creature's fitness rating 
+      // Add creature n times to mating pool, where n is the creature's fitness rating.
       for (let i = 0; i < creature.score; i++) {
         this.selectionPool.push(creature)
       }
@@ -255,10 +250,10 @@ class Generation {
   }
 
   breedCreatures() {
+    // Choose creatures from selection pool and breed them.
     const children = []
     let creature1, creature2, child
     for (let i = 0; i < RUNS; i++) {
-      //console.log(this.selectionPool)
       creature1 = this.selectionPool[Math.floor(Math.random() * this.selectionPool.length)]
       creature2 = this.selectionPool[Math.floor(Math.random() * this.selectionPool.length)]
       child = creature1.breed(creature2).mutate()
@@ -269,9 +264,12 @@ class Generation {
 }
 
 function prepareNextGeneration() {
+  // Create next generation
   generations.push(new Generation())
   const nextGeneration = generations[generations.length - 1]
   const prevGeneration = generations[generations.length - 2]
+
+  // Breeding process
   prevGeneration.evaluateCreatures().createSelectionPool()
   nextGeneration.creatures = prevGeneration.breedCreatures()
 }
@@ -299,13 +297,16 @@ function runCreature(state, generation) {
 }
 
 
-// NEXT ITERATION STEP FOR SOLVING
-function iter(initState) {
-  // PERFORM ITERATIVE CALCULATIONS HERE //
+// This function is called for every generation.
+function nextGeneration(initState) {
+  // Determine current generation.
   const currentGen = generations[generations.length - 1]
+
   while (currentGen.runsCompleted < RUNS) {
     // Hard copy of the state
     const state = cloneDeep(initState)
+
+    // Run a creature and check if successful
     const runInformation = runCreature(state, currentGen)
     if (runInformation.isWin) return runInformation.creature.actions;
     currentGen.runsCompleted += 1
@@ -313,22 +314,26 @@ function iter(initState) {
 
   prepareNextGeneration()
 
-  // return a sequence of actions or empty list
+  // return a sequence of actions if successful or empty list if unsuccessful.
   return [];
 }
 
 // eslint-disable-next-line no-unused-vars
 function initStack(initState) {
+  // Here we initialize our agent before running.
+  // We reset the generations array, in case it's not empty from running the previous level.
+  // We add the first generation to the array. Further generations will be added on demand during iteration.
   generations.length = 0
   generations.push(new Generation())
+  // We add our creatures whose genetic makeup is completely random to the first generation.
   for (let i = 0; i < RUNS; i++) {
     generations[0].creatures.push(new Creature().addRandomActions(STEPS))
   }
 }
 
-// VISIBLE FUNCTION FOR OTHER JS FILES (NODEJS)
+// These functions are exported, so that the simulator can access our agent.
 module.exports = {
-  step(initState) { return iter(initState); },
+  step(initState) { return nextGeneration(initState); },
   init(initState) { initStack(initState); },
   best_sol() { return generations[generations.length - 1].creatures[0].actions; }
 };
