@@ -121,9 +121,9 @@ function convertResultToActions(astarResult) {
 
 function startAstar(state){
 	// debug
-	for (const row of state.orig_map) {
-		console.log(row + " ")
-	}
+	// for (const row of state.orig_map) {
+	// 	console.log(row + " ")
+	// }
 	console.log("Astar started.")
 
 
