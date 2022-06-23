@@ -154,11 +154,6 @@ function startAstar(state){
 			}
 		}
 	}
-  if (actions.length > 0) {
-    console.log("Astar Result:\n" + actions)
-  } else {
-    console.log("Astar no result...")
-  }
   
 	return actions
 }
@@ -423,6 +418,23 @@ function prepareNextGeneration() {
 
 function runCreature(state, generation) {
   const creature = generation.creatures[generation.runsCompleted]
+  
+  // doesn't work yet
+  // small chance to start astar search
+  // if (Math.random() < 0.001) {
+  //   const res = startAstar(state)
+  //   // return if successful
+  //   if (res.length !== 0) {
+  //     // store path in creature.actions
+  //     creature.actions = res
+  //     console.log("\n\nResult in runCreature: " + creature.actions + "\n\n")
+  //     return {
+  //       isWin: true,
+  //       creature: creature
+  //     }
+  //   }
+  // }
+
   let move
   for (let i = 0; i < creature.actions.length; i++) {
     move = simjs.nextMove(creature.actions[i], state)
@@ -434,6 +446,7 @@ function runCreature(state, generation) {
     creature.evaluateStateFitness(move.next_state)
     if (move.won) break;
   }
+
   return {
     finalState: move.next_state,
     isWin: move.won,
@@ -444,13 +457,13 @@ function runCreature(state, generation) {
 
 // NEXT ITERATION STEP FOR SOLVING
 function iter(initState) {
-  // PERFORM ITERATIVE CALCULATIONS HERE //
-
   // before solving with the genetic algorithm, search for a direct path
   // using the astar algorithm
   if (generations.length === 1) {
     const state = cloneDeep(initState)
+    // returns list of actions if successful, else empty list
     const res = startAstar(state)
+    // console.log("Initial astar result: " + res)
     if (res.length !== 0) return res;
   }
 
