@@ -34,11 +34,13 @@ function runCreature(state, generation) {
   let move
   for (let i = 0; i < creature.actions.length; i++) {
     move = simjs.nextMove(creature.actions[i], state)
+
+    // Check if no actors left. 
     if (!move.next_state.players.length) {
       // Try to find a path using the Astar algorithm just before dying
       let path = astar(state)
       if (path.length) {
-        const revisedActions = creature.actions.slice(0, i + 1).concat(path)
+        const revisedActions = creature.actions.slice(0, i).concat(path)
         creature.actions = revisedActions
         return {
           isWin: true,
@@ -52,12 +54,29 @@ function runCreature(state, generation) {
       creature.evaluateStateFitness(move.next_state)
       break
     }
+
     creature.evaluateStateFitness(move.next_state)
+
     if (move.won) return {
       isWin: true,
       creature: creature,
       solutionLength: i + 1
     };
+
+    // Check if there's a rule change. If yes, apply Astar.
+    if (state.rules.sort().join(',') !== move.next_state.rules.sort().join(',')) {
+      let path = astar(move.next_state)
+      if (path.length) {
+        const revisedActions = creature.actions.slice(0, i + 1).concat(path)
+        creature.actions = revisedActions
+        return {
+          isWin: true,
+          creature: creature,
+          solutionLength: i + 1 + path.length
+        }
+      }
+    }
+
   }
   return {
     isWin: false,
