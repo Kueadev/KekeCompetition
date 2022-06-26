@@ -10,7 +10,7 @@ var astar = require('../js/astar');
 let possActions = ["space", "right", "up", "left", "down"];
 
 var MAX_SEQ = 50;
-var RAN_SEQ = 2
+var RAN_SEQ = 5
 
 let result = []    // "best" solution
 
@@ -124,8 +124,12 @@ function startAstar(state){
 	// for (const row of state.orig_map) {
 	// 	console.log(row + " ")
 	// }
-	console.log("Astar started.")
+	// console.log("Astar started.")
 
+	// return immediately if there is no object with win trait
+	if (state.winnables.length === 0) {
+		return []
+	}
 
 	const searchGrid = initSearchGrid(state)
 
@@ -153,7 +157,7 @@ function startAstar(state){
 			}
 		}
 	}
-	console.log("Astar Result:\n" + actions)
+	// console.log("Astar Result:\n" + actions)
 	return actions
 }
 
@@ -187,18 +191,19 @@ function iterSolve(state){
 				}
 			}
 			break
-		} else {
-			// try random steps
-			let randomSteps = makeRandomSeq()
-			// add steps & update state
-			for (let step of randomSteps) {
-				result.push(step)
-				if (result.length == MAX_SEQ) {
-					break
-				}
-				currState = simjs.nextMove(step, currState).next_state
-			}
 		}
+
+		// try random steps
+		let randomSteps = makeRandomSeq()
+		// add steps & update state
+		for (let step of randomSteps) {
+			result.push(step)
+			if (result.length == MAX_SEQ) {
+				break
+			}
+			currState = simjs.nextMove(step, currState).next_state
+		}
+		
 	}
 
 	return result;
