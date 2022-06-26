@@ -74,7 +74,7 @@ function nextGeneration(initState) {
 }
 
 // eslint-disable-next-line no-unused-vars
-function initStack(initState) {
+function initialize(initState) {
   // Here we initialize our agent before running.
   // We reset the generations array, in case it's not empty from running the previous level.
   // We add the first generation to the array. Further generations will be added on demand during iteration.
@@ -89,6 +89,6 @@ function initStack(initState) {
 // These functions are exported, so that the simulator can access our agent.
 module.exports = {
   step(initState) { return nextGeneration(initState); },
-  init(initState) { initStack(initState); },
+  init(initState) { initialize(initState); },
   best_sol() { return generations[generations.length - 1].creatures[0].actions; }
 };
